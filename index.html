@@ -1,0 +1,2220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Quién quiere ser Millonario? - Semana de la Calidad MAZ 2026</title>
+    <style>
+        /* ==========================================================================
+           VARIABLES Y RESET (100% CSS NATIVO - CERO DEPENDENCIAS EXTERNAS)
+           ========================================================================== */
+        :root {
+            --maz-navy: #001E3D;
+            --maz-navy-deep: #020813;
+            --maz-navy-light: #0A2E5C;
+            --maz-gold: #FFB800;
+            --maz-gold-light: #FFE066;
+            --maz-gold-dark: #C88A00;
+            --cyan-accent: #00D2FF;
+            --green-correct: #16A34A;
+            --green-glow: #4ADE80;
+            --red-wrong: #DC2626;
+            --red-glow: #F87171;
+            --text-white: #FFFFFF;
+            --text-muted: #94A3B8;
+            --text-slate: #CBD5E1;
+            --border-silver: #64748B;
+            --font-main: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            --font-display: 'Trebuchet MS', 'Segoe UI', Impact, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--maz-navy-deep);
+            color: var(--text-white);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+            user-select: none;
+            position: relative;
+        }
+
+        button, input {
+            font-family: inherit;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ==========================================================================
+           ESCENARIO DE ESTUDIO DE TV
+           ========================================================================== */
+        .tv-studio-bg {
+            background: radial-gradient(circle at 50% 30%, #0d2b56 0%, #041022 55%, #01050c 100%);
+        }
+
+        .light-beam {
+            position: fixed;
+            top: -25%;
+            left: 50%;
+            width: 150vw;
+            height: 150vh;
+            transform: translateX(-50%);
+            background: conic-gradient(
+                from 0deg at 50% 50%,
+                transparent 0deg,
+                rgba(0, 210, 255, 0.05) 15deg,
+                transparent 35deg,
+                rgba(255, 184, 0, 0.05) 65deg,
+                transparent 85deg,
+                rgba(0, 210, 255, 0.05) 125deg,
+                transparent 150deg,
+                rgba(255, 184, 0, 0.05) 205deg,
+                transparent 230deg,
+                rgba(0, 210, 255, 0.05) 275deg,
+                transparent 305deg,
+                rgba(255, 184, 0, 0.05) 335deg,
+                transparent 360deg
+            );
+            animation: rotateBeams 50s linear infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes rotateBeams {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .stage-grid {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 32vh;
+            background: 
+                linear-gradient(to top, rgba(0, 210, 255, 0.08) 1px, transparent 1px),
+                linear-gradient(to right, rgba(255, 184, 0, 0.05) 1px, transparent 1px);
+            background-size: 48px 28px;
+            transform: perspective(320px) rotateX(65deg);
+            transform-origin: bottom;
+            pointer-events: none;
+            opacity: 0.65;
+            z-index: 0;
+        }
+
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* ==========================================================================
+           BARRA SUPERIOR (HEADER)
+           ========================================================================== */
+        .app-header {
+            position: relative;
+            z-index: 20;
+            width: 100%;
+            padding: 10px 20px;
+            background: rgba(2, 8, 19, 0.85);
+            border-bottom: 1px solid rgba(255, 184, 0, 0.25);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo-mini {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 0 6px rgba(255, 184, 0, 0.35));
+        }
+
+        .header-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.06em;
+            color: var(--maz-gold);
+            text-transform: uppercase;
+        }
+
+        .header-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-slate);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 30, 61, 0.9);
+            border: 1px solid rgba(255, 184, 0, 0.45);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        .icon-btn {
+            background: rgba(15, 23, 42, 0.9);
+            border: 1px solid var(--border-silver);
+            color: var(--maz-gold);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .icon-btn:hover {
+            background: var(--maz-navy-light);
+            border-color: var(--maz-gold);
+            transform: scale(1.06);
+        }
+
+        .mobile-ladder-btn {
+            display: none;
+            background: rgba(255, 184, 0, 0.15);
+            border: 1px solid rgba(255, 184, 0, 0.55);
+            color: var(--maz-gold-light);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            cursor: pointer;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* ==========================================================================
+           CONTENEDOR CENTRAL Y TARJETAS
+           ========================================================================== */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .card-panel {
+            width: 100%;
+            max-width: 720px;
+            background: rgba(4, 15, 35, 0.9);
+            border: 2px solid rgba(255, 184, 0, 0.5);
+            border-radius: 26px;
+            padding: 28px 24px;
+            box-shadow: 0 0 55px rgba(0, 0, 0, 0.85), inset 0 0 25px rgba(0, 210, 255, 0.08);
+            backdrop-filter: blur(12px);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Animación de flotación suave para el logo oficial */
+        .logo-float {
+            animation: floatLogo 4.2s ease-in-out infinite;
+        }
+
+        @keyframes floatLogo {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+        }
+
+        .logo-hero-wrapper {
+            width: 220px;
+            height: 220px;
+            margin-bottom: 16px;
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 18px rgba(255, 184, 0, 0.25));
+        }
+
+        .pill-tag {
+            display: inline-block;
+            padding: 5px 16px;
+            border-radius: 999px;
+            background: rgba(0, 210, 255, 0.12);
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            color: #7DD3FC;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.55rem, 3.8vw, 2.35rem);
+            font-weight: 900;
+            letter-spacing: 0.03em;
+            background: linear-gradient(90deg, #FFF3B0 0%, #FFB800 50%, #FFF3B0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 18px rgba(255, 184, 0, 0.25);
+            margin-bottom: 10px;
+        }
+
+        .hero-desc {
+            color: var(--text-slate);
+            font-size: 0.95rem;
+            line-height: 1.55;
+            max-width: 560px;
+            margin-bottom: 22px;
+        }
+
+        .input-group {
+            width: 100%;
+            max-width: 430px;
+            margin-bottom: 22px;
+            text-align: left;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 0.74rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--maz-gold-light);
+            margin-bottom: 8px;
+        }
+
+        .text-input {
+            width: 100%;
+            padding: 13px 16px;
+            border-radius: 14px;
+            background: rgba(1, 6, 15, 0.9);
+            border: 2px solid rgba(0, 210, 255, 0.35);
+            color: var(--text-white);
+            font-size: 1rem;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .text-input:focus {
+            border-color: var(--maz-gold);
+            box-shadow: 0 0 15px rgba(255, 184, 0, 0.35);
+        }
+
+        .btn-primary-gold {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px 34px;
+            border-radius: 999px;
+            border: none;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB800 55%, #D99B00 100%);
+            color: var(--maz-navy-deep);
+            font-size: 1.02rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            box-shadow: 0 0 28px rgba(255, 184, 0, 0.55);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-primary-gold:hover {
+            transform: scale(1.04) translateY(-1px);
+            box-shadow: 0 0 40px rgba(255, 210, 50, 0.85);
+        }
+
+        .features-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 26px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            font-size: 0.76rem;
+            color: var(--text-muted);
+        }
+
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-weight: 600;
+        }
+
+        /* ==========================================================================
+           LAYOUT DEL TABLERO DE JUEGO
+           ========================================================================== */
+        .game-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .game-stage-col {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .stage-top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 14px;
+            padding: 6px 8px;
+        }
+
+        .stage-logo-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stage-logo-box {
+            width: 96px;
+            height: 96px;
+            flex-shrink: 0;
+            filter: drop-shadow(0 4px 14px rgba(0,0,0,0.65));
+        }
+
+        .badge-level {
+            display: inline-block;
+            background: rgba(255, 184, 0, 0.18);
+            border: 1px solid rgba(255, 184, 0, 0.55);
+            color: var(--maz-gold-light);
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 999px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 4px;
+        }
+
+        .prize-current-title {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--text-white);
+            text-shadow: 0 0 12px rgba(255, 184, 0, 0.5);
+        }
+
+        .module-subtitle {
+            font-size: 0.76rem;
+            color: #7DD3FC;
+            font-weight: 600;
+        }
+
+        /* COMODINES (LIFELINES) */
+        .lifelines-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .lifelines-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .lifelines-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lifeline-btn {
+            position: relative;
+            width: 84px;
+            height: 52px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #1d4ed8, #001E3D 75%);
+            border: 2.5px solid var(--maz-gold);
+            box-shadow: 0 0 14px rgba(255, 184, 0, 0.35), inset 0 0 10px rgba(0, 210, 255, 0.45);
+            color: var(--maz-gold-light);
+            font-weight: 900;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.22s ease;
+        }
+
+        .lifeline-btn:hover:not(:disabled) {
+            transform: scale(1.09) translateY(-2px);
+            border-color: #FFF3B0;
+            box-shadow: 0 0 22px rgba(255, 184, 0, 0.8), inset 0 0 12px rgba(0, 210, 255, 0.75);
+        }
+
+        .lifeline-used {
+            opacity: 0.4;
+            cursor: not-allowed !important;
+            filter: grayscale(65%);
+        }
+
+        .lifeline-used::before,
+        .lifeline-used::after {
+            content: '';
+            position: absolute;
+            width: 82%;
+            height: 4px;
+            background-color: var(--red-wrong);
+            box-shadow: 0 0 4px #000;
+            border-radius: 2px;
+        }
+        .lifeline-used::before { transform: rotate(28deg); }
+        .lifeline-used::after { transform: rotate(-28deg); }
+
+        /* CAJA DE RETROALIMENTACIÓN DE COMODINES */
+        .lifeline-box {
+            width: 100%;
+            margin-bottom: 14px;
+            background: rgba(3, 18, 42, 0.95);
+            border: 2px solid rgba(0, 210, 255, 0.6);
+            border-radius: 18px;
+            padding: 14px 18px;
+            box-shadow: 0 0 25px rgba(0, 210, 255, 0.22);
+        }
+
+        .lifeline-box-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .close-x-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            font-weight: 900;
+            cursor: pointer;
+            padding: 2px 6px;
+        }
+
+        .close-x-btn:hover {
+            color: var(--text-white);
+        }
+
+        /* ==========================================================================
+           CAJAS HEXAGONALES ESTILO MILLONARIO
+           ========================================================================== */
+        .hex-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hex-line {
+            position: absolute;
+            left: -16px;
+            right: -16px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #94A3B8, var(--maz-gold), #94A3B8, transparent);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .hex-question-box {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background: linear-gradient(180deg, #0d2854 0%, #041026 50%, #0d2854 100%);
+            border-top: 2.5px solid #CBD5E1;
+            border-bottom: 2.5px solid #CBD5E1;
+            box-shadow: 0 0 20px rgba(0, 210, 255, 0.22), inset 0 0 15px rgba(0, 210, 255, 0.18);
+            clip-path: polygon(24px 0%, calc(100% - 24px) 0%, 100% 50%, calc(100% - 24px) 100%, 24px 100%, 0% 50%);
+            padding: 24px 38px;
+            text-align: center;
+            margin: 10px 0 14px 0;
+        }
+
+        .question-text {
+            font-size: clamp(1.05rem, 2.2vw, 1.38rem);
+            font-weight: 800;
+            line-height: 1.38;
+            color: var(--text-white);
+        }
+
+        .options-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+        }
+
+        .option-btn {
+            cursor: pointer;
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            background: linear-gradient(180deg, #0b2248 0%, #040d21 50%, #0b2248 100%);
+            border: none;
+            border-top: 2px solid #94A3B8;
+            border-bottom: 2px solid #94A3B8;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.65);
+            clip-path: polygon(18px 0%, calc(100% - 18px) 0%, 100% 50%, calc(100% - 18px) 100%, 18px 100%, 0% 50%);
+            padding: 16px 26px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-white);
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background: linear-gradient(180deg, #163b7a 0%, #081838 50%, #163b7a 100%);
+            border-color: var(--maz-gold);
+            transform: scale(1.015);
+        }
+
+        .opt-diamond {
+            color: var(--maz-gold);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .opt-letter {
+            color: var(--maz-gold);
+            font-weight: 900;
+            font-size: 1.05rem;
+            flex-shrink: 0;
+        }
+
+        .opt-text {
+            font-size: 0.96rem;
+            font-weight: 600;
+            color: #F1F5F9;
+            flex: 1;
+        }
+
+        /* Estado Seleccionado: "¿Última palabra?" */
+        .option-selected {
+            background: linear-gradient(180deg, #FFB800 0%, #C88A00 50%, #FFB800 100%) !important;
+            border-color: #FFF3B0 !important;
+            animation: pulseWarning 1.2s infinite;
+        }
+        .option-selected .opt-diamond,
+        .option-selected .opt-letter,
+        .option-selected .opt-text {
+            color: #020617 !important;
+            font-weight: 800;
+        }
+
+        /* Estado Correcto */
+        .option-correct {
+            background: linear-gradient(180deg, #22C55E 0%, #15803D 50%, #22C55E 100%) !important;
+            border-color: #BBF7D0 !important;
+            animation: blinkSuccess 0.35s 4;
+        }
+        .option-correct .opt-diamond,
+        .option-correct .opt-letter,
+        .option-correct .opt-text {
+            color: #FFFFFF !important;
+            font-weight: 800;
+        }
+
+        /* Estado Incorrecto */
+        .option-wrong {
+            background: linear-gradient(180deg, #EF4444 0%, #991B1B 50%, #EF4444 100%) !important;
+            border-color: #FECACA !important;
+            animation: shakeError 0.45s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        /* Estado Descartado por 50:50 */
+        .option-hidden {
+            opacity: 0.22;
+            pointer-events: none;
+            filter: grayscale(100%);
+        }
+        .option-hidden .opt-text {
+            visibility: hidden;
+        }
+
+        @keyframes pulseWarning {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.18); }
+        }
+        @keyframes blinkSuccess {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.35); }
+        }
+        @keyframes shakeError {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        /* ==========================================================================
+           BARRA DE CONFIRMACIÓN "¿ÚLTIMA PALABRA?" Y ESTADO DE RESPUESTA
+           ========================================================================== */
+        .action-zone {
+            width: 100%;
+            min-height: 78px;
+            margin-top: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .final-word-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            background: rgba(255, 184, 0, 0.14);
+            border: 1.5px solid rgba(255, 184, 0, 0.65);
+            padding: 12px 22px;
+            border-radius: 18px;
+            backdrop-filter: blur(8px);
+        }
+
+        .final-word-question {
+            color: var(--maz-gold-light);
+            font-weight: 800;
+            font-size: 0.96rem;
+        }
+
+        .btn-confirm-word {
+            background: linear-gradient(90deg, #FFE066, #FFB800);
+            color: var(--maz-navy-deep);
+            border: none;
+            padding: 9px 18px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        .btn-confirm-word:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-cancel-word {
+            background: rgba(30, 41, 59, 0.9);
+            color: var(--text-slate);
+            border: 1px solid var(--border-silver);
+            padding: 9px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .status-banner {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 22px;
+            border-radius: 18px;
+            border: 1.5px solid;
+        }
+
+        .status-banner-ok {
+            background: rgba(6, 78, 59, 0.9);
+            border-color: var(--green-glow);
+        }
+
+        .status-banner-fail {
+            background: rgba(127, 29, 29, 0.92);
+            border-color: var(--red-glow);
+        }
+
+        .status-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .status-title {
+            font-weight: 900;
+            font-size: 0.98rem;
+            margin-bottom: 2px;
+        }
+
+        .status-desc {
+            font-size: 0.83rem;
+            color: #E2E8F0;
+        }
+
+        .btn-next-step {
+            background: #FFFFFF;
+            color: var(--maz-navy-deep);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+
+        .btn-next-step:hover {
+            background: var(--maz-gold-light);
+        }
+
+        /* ==========================================================================
+           PANEL LATERAL: ESCALERA DE PREMIOS (7 NIVELES)
+           ========================================================================== */
+        .ladder-panel {
+            background: rgba(2, 10, 24, 0.9);
+            border: 2px solid rgba(255, 184, 0, 0.45);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 0 35px rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ladder-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 12px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+        }
+
+        .ladder-title {
+            font-size: 0.92rem;
+            font-weight: 900;
+            color: var(--maz-gold);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .ladder-tag {
+            font-size: 0.68rem;
+            background: rgba(0, 210, 255, 0.15);
+            color: #7DD3FC;
+            border: 1px solid rgba(0, 210, 255, 0.4);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 800;
+        }
+
+        .ladder-list {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .ladder-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            background: rgba(15, 23, 42, 0.55);
+            border: 1px solid rgba(148, 163, 184, 0.15);
+            color: var(--text-slate);
+            transition: all 0.25s ease;
+        }
+
+        .ladder-step-safe {
+            color: var(--maz-gold-light);
+            background: rgba(255, 184, 0, 0.1);
+            border-color: rgba(255, 184, 0, 0.35);
+            font-weight: 700;
+        }
+
+        .ladder-step-active {
+            background: linear-gradient(90deg, #FFB800 0%, #D99B00 100%) !important;
+            color: var(--maz-navy-deep) !important;
+            font-weight: 900;
+            box-shadow: 0 0 16px rgba(255, 184, 0, 0.6);
+            transform: scale(1.03);
+        }
+
+        .ladder-step-passed {
+            color: var(--green-glow);
+            background: rgba(22, 163, 74, 0.15);
+            border-color: rgba(74, 222, 128, 0.3);
+        }
+
+        .ladder-footer {
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(148, 163, 184, 0.2);
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* ==========================================================================
+           CERTIFICADO FINAL Y MODALES
+           ========================================================================== */
+        .cert-box {
+            width: 100%;
+            background: linear-gradient(180deg, #030b1c 0%, #071f42 100%);
+            border: 2px solid rgba(255, 184, 0, 0.65);
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 22px;
+        }
+
+        .cert-player-name {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--text-white);
+            margin: 6px 0 16px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.25);
+        }
+
+        .cert-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .cert-stat-card {
+            background: rgba(2, 8, 20, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 14px;
+            padding: 12px;
+        }
+
+        .cert-stat-label {
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .cert-stat-val {
+            font-size: 1.05rem;
+            font-weight: 900;
+        }
+
+        .end-buttons-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-secondary-outline {
+            background: rgba(15, 23, 42, 0.9);
+            color: var(--text-white);
+            border: 1.5px solid var(--border-silver);
+            padding: 14px 24px;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary-outline:hover {
+            border-color: var(--cyan-accent);
+            background: rgba(0, 30, 61, 0.95);
+        }
+
+        /* MODALES */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        .modal-card {
+            background: #061329;
+            border: 2px solid var(--maz-gold);
+            border-radius: 24px;
+            max-width: 660px;
+            width: 100%;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-header {
+            padding: 16px 22px;
+            background: #020813;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            text-align: left;
+        }
+
+        .review-item {
+            background: rgba(2, 8, 19, 0.9);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 14px;
+            padding: 14px;
+        }
+
+        /* GRÁFICO DE BARRAS DEL PÚBLICO */
+        .poll-bars-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            gap: 14px;
+            max-width: 340px;
+            margin: 10px auto 0 auto;
+        }
+
+        .poll-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .poll-bar-track {
+            width: 42px;
+            height: 82px;
+            background: #020813;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 3px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .poll-bar-fill {
+            width: 100%;
+            border-radius: 5px;
+            transition: height 0.6s ease;
+        }
+
+        .app-footer {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            background: rgba(2, 8, 19, 0.75);
+            border-top: 1px solid rgba(148, 163, 184, 0.12);
+        }
+
+        /* ==========================================================================
+           RESPONSIVE (MÓVILES Y TABLETS)
+           ========================================================================== */
+        @media (max-width: 1024px) {
+            .game-grid {
+                grid-template-columns: 1fr;
+            }
+            .ladder-panel {
+                display: none;
+            }
+            .mobile-ladder-btn {
+                display: inline-flex;
+            }
+        }
+
+        @media (max-width: 680px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .cert-stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .features-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .stage-top-bar {
+                justify-content: center;
+                text-align: center;
+            }
+            .stage-logo-info {
+                flex-direction: column;
+            }
+            .hex-question-box {
+                padding: 18px 24px;
+            }
+            .status-banner {
+                flex-direction: column;
+                text-align: center;
+            }
+            .status-info {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body class="tv-studio-bg">
+
+    <!-- DEFINICIÓN VECTORIAL OFICIAL Y FIJA DEL LOGO "SEMANA DE LA CALIDAD MAZ 2026 - COMPROMISO 360°" -->
+    <svg width="0" height="0" style="position:absolute; visibility:hidden;" aria-hidden="true">
+        <defs>
+            <linearGradient id="mazArrowGrad" x1="15%" y1="90%" x2="88%" y2="55%">
+                <stop offset="0%" stop-color="#001E3D"/>
+                <stop offset="30%" stop-color="#001E3D"/>
+                <stop offset="58%" stop-color="#C88A00"/>
+                <stop offset="80%" stop-color="#FFB800"/>
+                <stop offset="100%" stop-color="#FFCC00"/>
+            </linearGradient>
+            <linearGradient id="mazRing360" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#F59E0B"/>
+                <stop offset="50%" stop-color="#FFE066"/>
+                <stop offset="100%" stop-color="#F59E0B"/>
+            </linearGradient>
+
+            <symbol id="official-sdc-logo" viewBox="0 0 500 500">
+                <!-- Fondo circular blanco con borde sutil -->
+                <circle cx="250" cy="255" r="228" fill="#FFFFFF" />
+
+                <!-- Anillo segmentado azul marino (#001E3D) desde 128° (abajo-izq) hasta 342° (derecha-arriba) -->
+                <path d="M 111 434 A 228 228 0 1 1 467 185 L 383 212 A 140 140 0 1 0 165 366 Z" fill="#001E3D"/>
+
+                <!-- Líneas radiales blancas separadoras de los 8 bloques de iconos -->
+                <g stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round">
+                    <line x1="162" y1="363" x2="108" y2="436" />
+                    <line x1="125" y1="319" x2="46" y2="359" />
+                    <line x1="110" y1="265" x2="21" y2="271" />
+                    <line x1="118" y1="205" x2="34" y2="174" />
+                    <line x1="152" y1="154" x2="89" y2="91" />
+                    <line x1="216" y1="119" x2="194" y2="33" />
+                    <line x1="286" y1="120" x2="310" y2="34" />
+                    <line x1="346" y1="154" x2="408" y2="90" />
+                </g>
+
+                <!-- 8 ICONOS BLANCOS DEL PROCESO CERVECERO 360° -->
+                <!-- 1. Camión de distribución (Abajo-Izquierda) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="75" y="366" width="32" height="22" rx="2"/>
+                    <path d="M 107 373 L 119 373 L 125 381 L 125 388 L 107 388 Z"/>
+                    <circle cx="85" cy="391" r="4.5" fill="#001E3D"/>
+                    <circle cx="115" cy="391" r="4.5" fill="#001E3D"/>
+                    <line x1="62" y1="371" x2="71" y2="371"/>
+                    <line x1="58" y1="377" x2="70" y2="377"/>
+                    <line x1="63" y1="383" x2="71" y2="383"/>
+                </g>
+
+                <!-- 2. Equipo / Personas (Izquierda-Abajo) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="58" cy="298" r="8"/>
+                    <path d="M 44 324 C 44 313 72 313 72 324 Z"/>
+                    <circle cx="40" cy="303" r="6"/>
+                    <path d="M 30 323 C 30 315 46 315 48 322"/>
+                    <circle cx="76" cy="303" r="6"/>
+                    <path d="M 68 322 C 70 315 86 315 86 323"/>
+                </g>
+
+                <!-- 3. Tapa Corona / Corcholata (Izquierda-Medio) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="3.3" stroke-linejoin="round">
+                    <ellipse cx="58" cy="222" rx="22" ry="11" fill="#001E3D"/>
+                    <path d="M 36 222 L 34 231 L 39 235 L 44 231 L 49 237 L 55 232 L 61 237 L 67 232 L 73 236 L 78 231 L 82 230 L 80 222"/>
+                </g>
+
+                <!-- 4. Espiga de Cebada / Malta (Izquierda-Arriba) -->
+                <g fill="#FFFFFF" transform="translate(90, 148) rotate(38)">
+                    <ellipse cx="0" cy="-22" rx="4.5" ry="9"/>
+                    <ellipse cx="-7" cy="-12" rx="4.5" ry="8.5" transform="rotate(-25 -7 -12)"/>
+                    <ellipse cx="7" cy="-12" rx="4.5" ry="8.5" transform="rotate(25 7 -12)"/>
+                    <ellipse cx="-7" cy="0" rx="4.5" ry="8.5" transform="rotate(-25 -7 0)"/>
+                    <ellipse cx="7" cy="0" rx="4.5" ry="8.5" transform="rotate(25 7 0)"/>
+                    <ellipse cx="-7" cy="12" rx="4.5" ry="8.5" transform="rotate(-25 -7 12)"/>
+                    <ellipse cx="7" cy="12" rx="4.5" ry="8.5" transform="rotate(25 7 12)"/>
+                    <line x1="0" y1="-32" x2="0" y2="26" stroke="#FFFFFF" stroke-width="3"/>
+                </g>
+
+                <!-- 5. Gota de Agua Pura (Arriba-Izquierda) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="4.5" stroke-linejoin="round">
+                    <path d="M 164 62 C 164 62 141 94 141 111 C 141 124 151 134 164 134 C 177 134 187 124 187 111 C 187 94 164 62 164 62 Z"/>
+                    <path d="M 173 106 A 11 11 0 0 1 164 123" stroke-width="3.5" stroke-linecap="round"/>
+                </g>
+
+                <!-- 6. Flor de Lúpulo (Arriba-Centro) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="3.8" stroke-linejoin="round">
+                    <path d="M 250 44 C 238 54 238 68 250 76 C 262 68 262 54 250 44 Z"/>
+                    <path d="M 237 64 C 225 72 227 88 242 93 C 246 83 244 72 237 64 Z"/>
+                    <path d="M 263 64 C 275 72 273 88 258 93 C 254 83 256 72 263 64 Z"/>
+                    <path d="M 250 76 C 238 86 238 101 250 112 C 262 101 262 86 250 76 Z"/>
+                </g>
+
+                <!-- 7. Lata de Cerveza (Arriba-Derecha) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="3.8" stroke-linejoin="round">
+                    <rect x="326" y="76" width="34" height="50" rx="6"/>
+                    <ellipse cx="343" cy="76" rx="14" ry="4.5" fill="#001E3D"/>
+                    <line x1="326" y1="119" x2="360" y2="119"/>
+                    <path d="M 332 88 L 332 110" stroke-width="2.8" stroke-linecap="round"/>
+                </g>
+
+                <!-- 8. Botella de Cerveza (Derecha-Arriba) -->
+                <g fill="none" stroke="#FFFFFF" stroke-width="3.8" stroke-linejoin="round">
+                    <path d="M 412 126 L 424 126 L 424 132 L 422 146 L 431 158 L 431 194 C 431 197 429 199 426 199 L 410 199 C 407 199 405 197 405 194 L 405 158 L 414 146 L 412 132 Z"/>
+                    <line x1="405" y1="191" x2="431" y2="191" stroke-width="2.5"/>
+                </g>
+
+                <!-- FLECHA CURVA ASCENDENTE (DE AZUL MARINO A AMARILLO DORADO MAZ) -->
+                <path d="M 111 434 
+                         A 228 228 0 0 0 452 356 
+                         L 476 369 
+                         L 447 298 
+                         L 377 328 
+                         L 401 339 
+                         A 172 172 0 0 1 165 366 Z" 
+                      fill="url(#mazArrowGrad)"/>
+
+                <!-- CÍRCULO BLANCO CENTRAL PARA TIPOGRAFÍA OFICIAL -->
+                <circle cx="250" cy="255" r="142" fill="#FFFFFF"/>
+
+                <!-- TEXTOS CENTRALES DEL LOGO OFICIAL -->
+                <text x="250" y="196" font-family="'Segoe UI', Arial, sans-serif" font-weight="800" font-size="35" fill="#001E3D" text-anchor="middle" letter-spacing="-0.5">Semana de la</text>
+                <text x="250" y="253" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="62" fill="#001E3D" text-anchor="middle" letter-spacing="0.5">CALIDAD</text>
+
+                <!-- "MAZ" DORADO CON PUNTAS LATERALES -->
+                <path d="M 105 289 L 172 284 C 176 284 176 294 172 294 Z" fill="#FFB800"/>
+                <text x="250" y="303" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="46" fill="#FFB800" text-anchor="middle" letter-spacing="3">MAZ</text>
+                <path d="M 395 289 L 328 284 C 324 284 324 294 328 294 Z" fill="#FFB800"/>
+
+                <!-- "• 2026 •" -->
+                <circle cx="204" cy="327" r="5.5" fill="#FFB800"/>
+                <text x="250" y="336" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="27" fill="#001E3D" text-anchor="middle" letter-spacing="2">2026</text>
+                <circle cx="296" cy="327" r="5.5" fill="#FFB800"/>
+
+                <!-- "Compromiso 360°" + Anillo Dorado Inferior -->
+                <text x="250" y="376" font-family="'Segoe UI', Arial, sans-serif" font-weight="800" font-size="29" fill="#001E3D" text-anchor="middle">Compromiso</text>
+
+                <!-- Aro 3D Amarillo debajo de 360° -->
+                <path d="M 185 402 C 155 415, 175 438, 250 438 C 325 438, 345 415, 315 402 C 332 414, 312 428, 250 428 C 188 428, 168 414, 185 402 Z" 
+                      fill="url(#mazRing360)" stroke="#E59400" stroke-width="1"/>
+                <text x="254" y="421" font-family="'Segoe UI', Arial, sans-serif" font-weight="900" font-size="50" fill="#001E3D" text-anchor="middle" letter-spacing="-1">360°</text>
+            </symbol>
+        </defs>
+    </svg>
+
+    <!-- Haces de luz y escenario -->
+    <div class="light-beam"></div>
+    <div class="stage-grid"></div>
+    <canvas id="confettiCanvas"></canvas>
+
+    <!-- ==========================================
+         BARRA SUPERIOR (SIN BOTÓN DE CAMBIAR LOGO)
+         ========================================== -->
+    <header class="app-header">
+        <div class="header-brand">
+            <svg class="header-logo-mini" viewBox="0 0 500 500" role="img" aria-label="Logo Semana de la Calidad MAZ 2026">
+                <use href="#official-sdc-logo"></use>
+            </svg>
+            <div>
+                <h1 class="header-title">Semana de la Calidad • MAZ 2026</h1>
+                <p class="header-subtitle">Compromiso 360° • Calidad desde la Fuente y en Cada Gota</p>
+            </div>
+        </div>
+
+        <div class="header-controls">
+            <div id="playerBadge" class="player-badge hidden">
+                <span>👤</span>
+                <span id="headerPlayerName">Participante</span>
+            </div>
+
+            <!-- Botón de Audio -->
+            <button id="btnToggleSound" onclick="toggleAudio()" class="icon-btn" title="Activar / Silenciar Efectos de Sonido">
+                <span id="soundIcon" style="font-size: 1.05rem;">🔊</span>
+            </button>
+
+            <!-- Botón Escalera en Móvil -->
+            <button id="btnMobileLadder" onclick="toggleMobileLadder()" class="mobile-ladder-btn">
+                <span>🏆</span>
+                <span id="mobileLevelIndicator">Nvl 1/7</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==========================================
+         CONTENEDOR PRINCIPAL
+         ========================================== -->
+    <main class="main-container">
+
+        <!-- 1. PANTALLA DE BIENVENIDA -->
+        <section id="startScreen" class="card-panel">
+            <div class="logo-hero-wrapper logo-float">
+                <svg width="100%" height="100%" viewBox="0 0 500 500" role="img" aria-label="Semana de la Calidad MAZ 2026 Compromiso 360">
+                    <use href="#official-sdc-logo"></use>
+                </svg>
+            </div>
+
+            <div class="pill-tag">Edición Especial • Agua de Proceso y Cerveza</div>
+            <h2 class="hero-title">¿QUIÉN QUIERE SER MILLONARIO?</h2>
+            <p class="hero-desc">
+                Pon a prueba tu <strong>Compromiso 360°</strong> en la <strong>Semana de la Calidad MAZ 2026</strong>. Supera las 7 preguntas sobre calidad del agua, parámetros de control y <em>Process Check</em> para conquistar el millón de Puntos de Calidad.
+            </p>
+
+            <div class="input-group">
+                <label for="playerNameInput" class="input-label">Nombre del Participante o Equipo MAZ:</label>
+                <input type="text" id="playerNameInput" class="text-input" placeholder="Ej. Equipo Calidad Planta / Tu Nombre...">
+            </div>
+
+            <button onclick="startGame()" class="btn-primary-gold">
+                <span>▶</span> ¡Iniciar el Reto 360°!
+            </button>
+
+            <div class="features-row">
+                <div class="feature-item">
+                    <span style="font-size: 1.2rem;">🏅</span>
+                    <span>7 Niveles Oficiales</span>
+                </div>
+                <div class="feature-item">
+                    <span style="font-size: 1.2rem;">🛟</span>
+                    <span>3 Comodines de Planta</span>
+                </div>
+                <div class="feature-item">
+                    <span style="font-size: 1.2rem;">📜</span>
+                    <span>Certificado MAZ 2026</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. PANTALLA DEL JUEGO -->
+        <section id="gameScreen" class="game-grid hidden">
+            
+            <!-- Columna Principal del Escenario -->
+            <div class="game-stage-col">
+                
+                <!-- Fila Superior: Logo Fijo + Nivel Actual + Comodines -->
+                <div class="stage-top-bar">
+                    <div class="stage-logo-info">
+                        <div class="stage-logo-box logo-float">
+                            <svg width="100%" height="100%" viewBox="0 0 500 500">
+                                <use href="#official-sdc-logo"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <span id="questionCounterBadge" class="badge-level">Pregunta 1 de 7</span>
+                            <h3 id="currentPrizeDisplay" class="prize-current-title">Por: 10.000 Pts de Calidad</h3>
+                            <p class="module-subtitle">Semana de la Calidad MAZ 2026 • Compromiso 360°</p>
+                        </div>
+                    </div>
+
+                    <!-- Los 3 Comodines -->
+                    <div class="lifelines-wrapper">
+                        <span class="lifelines-label">Comodines Disponibles</span>
+                        <div class="lifelines-row">
+                            <button id="lifeline5050" onclick="useLifeline5050()" class="lifeline-btn" title="50:50 - Elimina dos opciones incorrectas">
+                                <span>50:50</span>
+                            </button>
+                            <button id="lifelinePhone" onclick="useLifelineExpert()" class="lifeline-btn" title="Llamada al Maestro de Calidad MAZ">
+                                <span style="font-size: 1.25rem;">📞</span>
+                            </button>
+                            <button id="lifelineAudience" onclick="useLifelineAudience()" class="lifeline-btn" title="Votación del Equipo de Planta MAZ">
+                                <span style="font-size: 1.25rem;">👥</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel Dinámico de Ayuda de Comodines -->
+                <div id="lifelineFeedbackBox" class="lifeline-box hidden">
+                    <div class="lifeline-box-header">
+                        <div id="lifelineFeedbackContent" style="width: 100%;"></div>
+                        <button onclick="closeLifelineBox()" class="close-x-btn" title="Cerrar">✕</button>
+                    </div>
+                </div>
+
+                <!-- Caja Hexagonal de la Pregunta -->
+                <div class="hex-container">
+                    <div class="hex-line"></div>
+                    <div class="hex-question-box">
+                        <p id="questionText" class="question-text">Cargando pregunta...</p>
+                    </div>
+                </div>
+
+                <!-- Opciones A, B, C, D -->
+                <div class="options-grid">
+                    <div class="hex-container">
+                        <div class="hex-line"></div>
+                        <button id="optBtn0" onclick="selectOption(0)" class="option-btn">
+                            <span class="opt-diamond">◆</span>
+                            <span class="opt-letter">A:</span>
+                            <span id="optText0" class="opt-text">Opción A</span>
+                        </button>
+                    </div>
+
+                    <div class="hex-container">
+                        <div class="hex-line"></div>
+                        <button id="optBtn1" onclick="selectOption(1)" class="option-btn">
+                            <span class="opt-diamond">◆</span>
+                            <span class="opt-letter">B:</span>
+                            <span id="optText1" class="opt-text">Opción B</span>
+                        </button>
+                    </div>
+
+                    <div class="hex-container">
+                        <div class="hex-line"></div>
+                        <button id="optBtn2" onclick="selectOption(2)" class="option-btn">
+                            <span class="opt-diamond">◆</span>
+                            <span class="opt-letter">C:</span>
+                            <span id="optText2" class="opt-text">Opción C</span>
+                        </button>
+                    </div>
+
+                    <div class="hex-container">
+                        <div class="hex-line"></div>
+                        <button id="optBtn3" onclick="selectOption(3)" class="option-btn">
+                            <span class="opt-diamond">◆</span>
+                            <span class="opt-letter">D:</span>
+                            <span id="optText3" class="opt-text">Opción D</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Zona de Confirmación "¿Última palabra?" y Retroalimentación -->
+                <div class="action-zone">
+                    <div id="finalWordPrompt" class="final-word-bar hidden">
+                        <span class="final-word-question">❓ ¿Estás seguro? ¿Es tu última palabra?</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button onclick="confirmFinalAnswer()" class="btn-confirm-word">✓ ¡Sí, Última Palabra!</button>
+                            <button onclick="cancelSelection()" class="btn-cancel-word">Cambiar opción</button>
+                        </div>
+                    </div>
+
+                    <div id="answerStatusBanner" class="status-banner hidden">
+                        <div class="status-info">
+                            <span id="statusBannerIcon" style="font-size: 1.6rem;">✅</span>
+                            <div>
+                                <h4 id="statusBannerTitle" class="status-title">¡Respuesta Correcta!</h4>
+                                <p id="statusBannerDesc" class="status-desc"></p>
+                            </div>
+                        </div>
+                        <button id="btnNextAction" onclick="handleNextAction()" class="btn-next-step">Siguiente ➔</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Escalera de Premios -->
+            <aside class="ladder-panel">
+                <div class="ladder-header">
+                    <span class="ladder-title">🏆 Escalera 360°</span>
+                    <span class="ladder-tag">MAZ 2026</span>
+                </div>
+                <div id="prizeLadderList" class="ladder-list"></div>
+                <div class="ladder-footer">
+                    <span>★ Seguros: Nivel 2 y 5</span>
+                    <span style="color: #7DD3FC; font-weight: 700;">Compromiso 360°</span>
+                </div>
+            </aside>
+        </section>
+
+        <!-- 3. PANTALLA FINAL / CERTIFICADO -->
+        <section id="endScreen" class="card-panel hidden">
+            <div class="logo-hero-wrapper logo-float" style="width: 165px; height: 165px;">
+                <svg width="100%" height="100%" viewBox="0 0 500 500">
+                    <use href="#official-sdc-logo"></use>
+                </svg>
+            </div>
+
+            <div class="pill-tag">Certificado Oficial • Semana de la Calidad MAZ 2026</div>
+            <h2 id="endTitle" class="hero-title">¡GRAN MILLONARIO DE LA CALIDAD 360°!</h2>
+            <p id="endSubtitle" class="hero-desc">
+                Has demostrado que la calidad de nuestra cerveza comienza en la fuente y en cada gota de agua utilizada.
+            </p>
+
+            <div class="cert-box">
+                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: #7DD3FC; font-weight: 800;">
+                    Reconocimiento otorgado a:
+                </div>
+                <div id="certPlayerName" class="cert-player-name">Participante MAZ</div>
+
+                <div class="cert-stats-grid">
+                    <div class="cert-stat-card">
+                        <div class="cert-stat-label">Puntaje Alcanzado</div>
+                        <div id="certPrizeWon" class="cert-stat-val" style="color: var(--maz-gold);">1.000.000 Pts</div>
+                    </div>
+                    <div class="cert-stat-card">
+                        <div class="cert-stat-label">Respuestas Correctas</div>
+                        <div id="certCorrectCount" class="cert-stat-val" style="color: var(--green-glow);">7 / 7</div>
+                    </div>
+                    <div class="cert-stat-card">
+                        <div class="cert-stat-label">Rango Alcanzado</div>
+                        <div id="certRankTitle" class="cert-stat-val" style="color: #7DD3FC;">Maestro 360°</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="end-buttons-row">
+                <button onclick="resetAndPlayAgain()" class="btn-primary-gold">
+                    ↻ Jugar de Nuevo
+                </button>
+                <button onclick="reviewQuestionsModal()" class="btn-secondary-outline">
+                    📋 Ver Resumen de Respuestas
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL DE RESUMEN DE LAS 7 PREGUNTAS -->
+    <div id="reviewModal" class="modal-backdrop hidden">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 style="color: var(--maz-gold); font-size: 1rem; font-weight: 900;">
+                    📘 Banco de Conocimiento - Semana de la Calidad MAZ 2026
+                </h3>
+                <button onclick="closeReviewModal()" class="close-x-btn">✕</button>
+            </div>
+            <div id="reviewModalBody" class="modal-body"></div>
+            <div style="padding: 12px 20px; background: #020813; text-align: right; border-top: 1px solid rgba(148,163,184,0.2);">
+                <button onclick="closeReviewModal()" class="btn-confirm-word">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE ESCALERA PARA MÓVILES -->
+    <div id="mobileLadderModal" class="modal-backdrop hidden">
+        <div class="modal-card" style="max-width: 380px; padding: 18px;">
+            <div class="ladder-header">
+                <span class="ladder-title">🏆 Escalera de Premios MAZ</span>
+                <button onclick="toggleMobileLadder()" class="close-x-btn">✕</button>
+            </div>
+            <div id="mobilePrizeLadderList" class="ladder-list"></div>
+        </div>
+    </div>
+
+    <!-- PIE DE PÁGINA -->
+    <footer class="app-footer">
+        Semana de la Calidad <strong>MAZ 2026 • Compromiso 360°</strong> — "La calidad de la cerveza comienza en la fuente y en cada gota de agua utilizada"
+    </footer>
+
+    <!-- ==========================================
+         LÓGICA DEL JUEGO Y AUDIO WEB API
+         ========================================== -->
+    <script>
+        const QUESTIONS_BANK = [
+            {
+                level: 1,
+                prize: "10.000 Pts",
+                titleRank: "Aprendiz del Agua",
+                safeHaven: false,
+                question: "1. Según el video, ¿dónde comienza la calidad de la cerveza?",
+                options: [
+                    "En el envasado.",
+                    "En el producto terminado.",
+                    "En la fuente y en cada gota de agua utilizada.",
+                    "En la distribución."
+                ],
+                correctIndex: 2, // C
+                expertHint: "Recuerda el mensaje central del video: antes de llegar al envasado o distribución, la excelencia de nuestra cerveza nace en el origen mismo del agua.",
+                explanation: "La calidad de la cerveza comienza en la fuente y en cada gota de agua utilizada."
+            },
+            {
+                level: 2,
+                prize: "25.000 Pts",
+                titleRank: "Inspector de Fuente",
+                safeHaven: true,
+                question: "2. ¿Qué representa el agua para MAZ?",
+                options: [
+                    "Un recurso secundario.",
+                    "Un insumo opcional.",
+                    "Un elemento de limpieza únicamente.",
+                    "El principal ingrediente de la cerveza."
+                ],
+                correctIndex: 3, // D
+                expertHint: "Más del 90% de nuestra cerveza es agua cuidadosamente tratada. Por eso no es ni secundaria ni opcional.",
+                explanation: "Para MAZ, el agua representa el principal ingrediente de la cerveza."
+            },
+            {
+                level: 3,
+                prize: "50.000 Pts",
+                titleRank: "Analista de Proceso",
+                safeHaven: false,
+                question: "3. ¿Cuál es el objetivo del monitoreo continuo del agua de proceso?",
+                options: [
+                    "Reducir el consumo de agua.",
+                    "Garantizar que cumpla con las especificaciones establecidas.",
+                    "Disminuir los costos de producción.",
+                    "Incrementar el color de la cerveza."
+                ],
+                correctIndex: 1, // B
+                expertHint: "En Aseguramiento de Calidad realizamos seguimiento constante para verificar que cada lote de agua cumpla estrictamente con la norma técnica.",
+                explanation: "El monitoreo continuo garantiza que el agua de proceso cumpla con las especificaciones establecidas."
+            },
+            {
+                level: 4,
+                prize: "100.000 Pts",
+                titleRank: "Especialista de Laboratorio",
+                safeHaven: false,
+                question: "4. ¿Qué tipos de parámetros se monitorean en el agua de proceso?",
+                options: [
+                    "Financieros, ambientales y comerciales.",
+                    "Físicos, químicos y microbiológicos.",
+                    "Sensoriales y comerciales.",
+                    "Logísticos y operacionales."
+                ],
+                correctIndex: 1, // B
+                expertHint: "En el laboratorio de planta analizamos tres dimensiones científicas del agua: sus propiedades físicas, su composición química y su inocuidad microbiológica.",
+                explanation: "En el agua de proceso se monitorean parámetros físicos, químicos y microbiológicos."
+            },
+            {
+                level: 5,
+                prize: "250.000 Pts",
+                titleRank: "Catador Certificado",
+                safeHaven: true,
+                question: "5. Como parte de los Process Check, ¿qué actividad se realiza?",
+                options: [
+                    "Análisis de mercado.",
+                    "Catas de agua.",
+                    "Evaluación de proveedores.",
+                    "Pruebas de transporte."
+                ],
+                correctIndex: 1, // B
+                expertHint: "Dentro de las verificaciones operativas de Process Check validamos sensorialmente la pureza de nuestro ingrediente principal.",
+                explanation: "Como parte de los Process Check, se realiza la actividad de catas de agua."
+            },
+            {
+                level: 6,
+                prize: "500.000 Pts",
+                titleRank: "Líder de Calidad Cervecera",
+                safeHaven: false,
+                question: "6. Durante la cata de agua, ¿qué aspectos se evalúan principalmente?",
+                options: [
+                    "Color y temperatura.",
+                    "Sabor y nivel de espuma.",
+                    "pH y dureza.",
+                    "Olor y apariencia."
+                ],
+                correctIndex: 3, // D
+                expertHint: "El agua no tiene espuma y el pH o la dureza son mediciones físico-químicas de equipo. En la cata sensorial evaluamos cómo luce y qué aroma presenta.",
+                explanation: "Durante la cata de agua se evalúan principalmente el olor y la apariencia."
+            },
+            {
+                level: 7,
+                prize: "1.000.000 Pts",
+                titleRank: "Gran Millonario 360°",
+                safeHaven: true,
+                question: "7. ¿Cuál es el propósito de las catas de agua?",
+                options: [
+                    "Confirmar que el agua cumple con los criterios establecidos de calidad.",
+                    "Reducir los tiempos de producción.",
+                    "Medir el rendimiento de los equipos.",
+                    "Capacitar a los proveedores."
+                ],
+                correctIndex: 0, // A
+                expertHint: "¡Pregunta por el Millón de Puntos! Toda cata de agua tiene como fin último validar y confirmar que cumple con todos nuestros estándares de calidad.",
+                explanation: "El propósito de las catas de agua es confirmar que el agua cumple con los criterios establecidos de calidad."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let selectedOptionIndex = null;
+        let isQuestionLocked = false;
+        let playerName = "Participante MAZ";
+        let lifelinesState = {
+            fiftyFifty: false,
+            expertCall: false,
+            audiencePoll: false
+        };
+
+        // ==========================================
+        // AUDIO SINTETIZADO (WEB AUDIO API)
+        // ==========================================
+        let audioCtx = null;
+        let soundEnabled = true;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function toggleAudio() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('soundIcon');
+            if (soundEnabled) {
+                icon.textContent = '🔊';
+                playTone(523.25, 0.1, 'sine');
+            } else {
+                icon.textContent = '🔇';
+            }
+        }
+
+        function playTone(freq, duration, type = 'sine', delay = 0, volume = 0.14) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime + delay);
+                gain.gain.setValueAtTime(volume, audioCtx.currentTime + delay);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + delay + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime + delay);
+                osc.stop(audioCtx.currentTime + delay + duration);
+            } catch (e) {}
+        }
+
+        function playSoundEffect(effect) {
+            if (!soundEnabled) return;
+            switch (effect) {
+                case 'start':
+                    playTone(220, 0.22, 'sawtooth', 0, 0.12);
+                    playTone(277.18, 0.22, 'sawtooth', 0.16, 0.12);
+                    playTone(329.63, 0.22, 'sawtooth', 0.32, 0.12);
+                    playTone(440, 0.65, 'triangle', 0.48, 0.18);
+                    break;
+                case 'select':
+                    playTone(330, 0.14, 'triangle', 0, 0.14);
+                    playTone(392, 0.32, 'sine', 0.11, 0.14);
+                    break;
+                case 'correct':
+                    playTone(523.25, 0.14, 'triangle', 0, 0.16);
+                    playTone(659.25, 0.14, 'triangle', 0.12, 0.16);
+                    playTone(783.99, 0.16, 'triangle', 0.24, 0.16);
+                    playTone(1046.50, 0.5, 'sine', 0.36, 0.2);
+                    break;
+                case 'wrong':
+                    playTone(246.94, 0.28, 'sawtooth', 0, 0.18);
+                    playTone(185.00, 0.6, 'sawtooth', 0.24, 0.2);
+                    break;
+                case 'lifeline':
+                    playTone(587.33, 0.12, 'sine', 0, 0.15);
+                    playTone(880, 0.26, 'sine', 0.12, 0.15);
+                    break;
+                case 'victory':
+                    const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50];
+                    const times = [0, 0.14, 0.28, 0.42, 0.62, 0.78];
+                    const durs  = [0.14, 0.14, 0.14, 0.2, 0.15, 0.8];
+                    notes.forEach((n, idx) => playTone(n, durs[idx], 'triangle', times[idx], 0.2));
+                    break;
+            }
+        }
+
+        // ==========================================
+        // FLUJO PRINCIPAL DEL JUEGO
+        // ==========================================
+        function startGame() {
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            playerName = nameInput !== "" ? nameInput : "Embajador Compromiso 360°";
+
+            document.getElementById('headerPlayerName').textContent = playerName;
+            document.getElementById('playerBadge').classList.remove('hidden');
+
+            currentQuestionIndex = 0;
+            selectedOptionIndex = null;
+            isQuestionLocked = false;
+            lifelinesState = { fiftyFifty: false, expertCall: false, audiencePoll: false };
+
+            ['lifeline5050', 'lifelinePhone', 'lifelineAudience'].forEach(id => {
+                const btn = document.getElementById(id);
+                btn.classList.remove('lifeline-used');
+                btn.disabled = false;
+            });
+
+            stopConfetti();
+            playSoundEffect('start');
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('endScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            renderLadder();
+            loadCurrentQuestion();
+        }
+
+        function renderLadder() {
+            const desktopLadder = document.getElementById('prizeLadderList');
+            const mobileLadder = document.getElementById('mobilePrizeLadderList');
+            desktopLadder.innerHTML = '';
+            mobileLadder.innerHTML = '';
+
+            for (let i = QUESTIONS_BANK.length - 1; i >= 0; i--) {
+                const item = QUESTIONS_BANK[i];
+                const isCurrent = (i === currentQuestionIndex);
+                const isPassed = (i < currentQuestionIndex);
+
+                let stepClass = "ladder-step";
+                if (isCurrent) {
+                    stepClass += " ladder-step-active";
+                } else if (isPassed) {
+                    stepClass += " ladder-step-passed";
+                } else if (item.safeHaven) {
+                    stepClass += " ladder-step-safe";
+                }
+
+                const stepHTML = `
+                    <div class="${stepClass}">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-weight:900; width:18px;">${item.level}</span>
+                            <span>${item.titleRank}</span>
+                        </div>
+                        <div style="font-weight:900;">
+                            ${isPassed ? '✓ ' : (item.safeHaven && !isCurrent ? '★ ' : '')}${item.prize}
+                        </div>
+                    </div>
+                `;
+                desktopLadder.insertAdjacentHTML('beforeend', stepHTML);
+                mobileLadder.insertAdjacentHTML('beforeend', stepHTML);
+            }
+
+            document.getElementById('mobileLevelIndicator').textContent = `Nvl ${currentQuestionIndex + 1}/7`;
+        }
+
+        function loadCurrentQuestion() {
+            const qData = QUESTIONS_BANK[currentQuestionIndex];
+            selectedOptionIndex = null;
+            isQuestionLocked = false;
+
+            document.getElementById('questionCounterBadge').textContent = `Pregunta ${qData.level} de ${QUESTIONS_BANK.length}`;
+            document.getElementById('currentPrizeDisplay').textContent = `Por: ${qData.prize} de Calidad`;
+            document.getElementById('questionText').textContent = qData.question;
+
+            document.getElementById('finalWordPrompt').classList.add('hidden');
+            document.getElementById('answerStatusBanner').classList.add('hidden');
+            closeLifelineBox();
+
+            for (let i = 0; i < 4; i++) {
+                const btn = document.getElementById(`optBtn${i}`);
+                const txt = document.getElementById(`optText${i}`);
+                txt.textContent = qData.options[i];
+                btn.disabled = false;
+                btn.className = "option-btn";
+            }
+
+            renderLadder();
+        }
+
+        function selectOption(index) {
+            if (isQuestionLocked) return;
+            selectedOptionIndex = index;
+            playSoundEffect('select');
+
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`optBtn${i}`).classList.remove('option-selected');
+            }
+
+            document.getElementById(`optBtn${index}`).classList.add('option-selected');
+            document.getElementById('finalWordPrompt').classList.remove('hidden');
+        }
+
+        function cancelSelection() {
+            if (isQuestionLocked) return;
+            selectedOptionIndex = null;
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`optBtn${i}`).classList.remove('option-selected');
+            }
+            document.getElementById('finalWordPrompt').classList.add('hidden');
+        }
+
+        function confirmFinalAnswer() {
+            if (selectedOptionIndex === null || isQuestionLocked) return;
+            isQuestionLocked = true;
+
+            document.getElementById('finalWordPrompt').classList.add('hidden');
+
+            for (let i = 0; i < 4; i++) {
+                document.getElementById(`optBtn${i}`).disabled = true;
+            }
+
+            const qData = QUESTIONS_BANK[currentQuestionIndex];
+            const chosenBtn = document.getElementById(`optBtn${selectedOptionIndex}`);
+            const correctBtn = document.getElementById(`optBtn${qData.correctIndex}`);
+
+            setTimeout(() => {
+                chosenBtn.classList.remove('option-selected');
+
+                const banner = document.getElementById('answerStatusBanner');
+                const icon = document.getElementById('statusBannerIcon');
+                const title = document.getElementById('statusBannerTitle');
+                const desc = document.getElementById('statusBannerDesc');
+                const nextBtn = document.getElementById('btnNextAction');
+
+                banner.classList.remove('hidden', 'status-banner-ok', 'status-banner-fail');
+
+                if (selectedOptionIndex === qData.correctIndex) {
+                    chosenBtn.classList.add('option-correct');
+                    playSoundEffect('correct');
+
+                    banner.classList.add('status-banner-ok');
+                    icon.textContent = "✅";
+                    title.textContent = `¡Correcto! Aseguraste ${qData.prize}`;
+                    desc.textContent = qData.explanation;
+
+                    if (currentQuestionIndex === QUESTIONS_BANK.length - 1) {
+                        nextBtn.textContent = "🏆 ¡Recibir Millón 360°!";
+                    } else {
+                        nextBtn.textContent = "Siguiente Nivel ➔";
+                    }
+                    nextBtn.dataset.action = "next";
+                } else {
+                    chosenBtn.classList.add('option-wrong');
+                    correctBtn.classList.add('option-correct');
+                    playSoundEffect('wrong');
+
+                    const correctLetter = ['A', 'B', 'C', 'D'][qData.correctIndex];
+                    banner.classList.add('status-banner-fail');
+                    icon.textContent = "❌";
+                    title.textContent = `Respuesta Incorrecta (La correcta era la ${correctLetter})`;
+                    desc.textContent = qData.explanation;
+                    nextBtn.textContent = "Ver Certificado Final ➔";
+                    nextBtn.dataset.action = "finish_loss";
+                }
+            }, 500);
+        }
+
+        function handleNextAction() {
+            const action = document.getElementById('btnNextAction').dataset.action;
+            if (action === "next") {
+                if (currentQuestionIndex < QUESTIONS_BANK.length - 1) {
+                    currentQuestionIndex++;
+                    loadCurrentQuestion();
+                } else {
+                    showEndScreen(true);
+                }
+            } else {
+                showEndScreen(false);
+            }
+        }
+
+        // ==========================================
+        // COMODINES INTERACTIVOS
+        // ==========================================
+        function useLifeline5050() {
+            if (lifelinesState.fiftyFifty || isQuestionLocked) return;
+            lifelinesState.fiftyFifty = true;
+            playSoundEffect('lifeline');
+
+            const btn = document.getElementById('lifeline5050');
+            btn.classList.add('lifeline-used');
+            btn.disabled = true;
+
+            cancelSelection();
+
+            const qData = QUESTIONS_BANK[currentQuestionIndex];
+            const wrongIndices = [0, 1, 2, 3].filter(i => i !== qData.correctIndex);
+            wrongIndices.sort(() => Math.random() - 0.5);
+            const toHide = wrongIndices.slice(0, 2);
+
+            toHide.forEach(idx => {
+                const optBtn = document.getElementById(`optBtn${idx}`);
+                optBtn.classList.add('option-hidden');
+                optBtn.disabled = true;
+            });
+
+            showLifelineMessage(`
+                <div style="text-align:left;">
+                    <strong style="color: var(--maz-gold); font-size:0.82rem; text-transform:uppercase;">⚡ Comodín 50:50 Aplicado</strong>
+                    <p style="font-size:0.88rem; color:#E2E8F0; margin-top:4px;">El sistema de control de calidad ha descartado dos respuestas incorrectas.</p>
+                </div>
+            `);
+        }
+
+        function useLifelineExpert() {
+            if (lifelinesState.expertCall || isQuestionLocked) return;
+            lifelinesState.expertCall = true;
+            playSoundEffect('lifeline');
+
+            const btn = document.getElementById('lifelinePhone');
+            btn.classList.add('lifeline-used');
+            btn.disabled = true;
+
+            const qData = QUESTIONS_BANK[currentQuestionIndex];
+            const correctLetter = ['A', 'B', 'C', 'D'][qData.correctIndex];
+
+            showLifelineMessage(`
+                <div style="text-align:left;">
+                    <strong style="color: #7DD3FC; font-size:0.82rem; text-transform:uppercase;">📞 Maestro de Calidad MAZ en línea:</strong>
+                    <p style="font-size:0.9rem; color:#F8FAFC; font-style:italic; margin-top:5px;">
+                        "¡Hola ${playerName}! Excelente pregunta. ${qData.expertHint} Sin duda alguna, marca la opción <strong style="color:var(--maz-gold); text-decoration:underline;">${correctLetter}</strong>."
+                    </p>
+                </div>
+            `);
+        }
+
+        function useLifelineAudience() {
+            if (lifelinesState.audiencePoll || isQuestionLocked) return;
+            lifelinesState.audiencePoll = true;
+            playSoundEffect('lifeline');
+
+            const btn = document.getElementById('lifelineAudience');
+            btn.classList.add('lifeline-used');
+            btn.disabled = true;
+
+            const qData = QUESTIONS_BANK[currentQuestionIndex];
+            const letters = ['A', 'B', 'C', 'D'];
+            let percentages = [0, 0, 0, 0];
+            const correctPct = Math.floor(Math.random() * 14) + 74;
+            percentages[qData.correctIndex] = correctPct;
+
+            let remaining = 100 - correctPct;
+            for (let i = 0; i < 4; i++) {
+                if (i !== qData.correctIndex) {
+                    const isHidden = document.getElementById(`optBtn${i}`).classList.contains('option-hidden');
+                    if (isHidden) {
+                        percentages[i] = 0;
+                    } else {
+                        const val = Math.floor(Math.random() * (remaining + 1));
+                        percentages[i] = val;
+                        remaining -= val;
+                    }
+                }
+            }
+            percentages[qData.correctIndex] += remaining;
+
+            let barsHTML = '';
+            for (let i = 0; i < 4; i++) {
+                const isWinner = (i === qData.correctIndex);
+                const fillBg = isWinner
+                    ? 'linear-gradient(180deg, #FFE066, #FFB800)'
+                    : 'linear-gradient(180deg, #38BDF8, #0284C7)';
+                barsHTML += `
+                    <div class="poll-col">
+                        <span style="font-size:0.76rem; font-weight:900; color:${isWinner ? 'var(--maz-gold)' : '#CBD5E1'}; margin-bottom:4px;">${percentages[i]}%</span>
+                        <div class="poll-bar-track">
+                            <div class="poll-bar-fill" style="height:${percentages[i]}%; background:${fillBg};"></div>
+                        </div>
+                        <span style="font-size:0.8rem; font-weight:900; margin-top:4px;">${letters[i]}</span>
+                    </div>
+                `;
+            }
+
+            showLifelineMessage(`
+                <div style="text-align:center;">
+                    <strong style="color: var(--maz-gold); font-size:0.82rem; text-transform:uppercase;">👥 Votación del Equipo de Planta MAZ</strong>
+                    <div class="poll-bars-container">${barsHTML}</div>
+                </div>
+            `);
+        }
+
+        function showLifelineMessage(htmlContent) {
+            const box = document.getElementById('lifelineFeedbackBox');
+            document.getElementById('lifelineFeedbackContent').innerHTML = htmlContent;
+            box.classList.remove('hidden');
+        }
+
+        function closeLifelineBox() {
+            document.getElementById('lifelineFeedbackBox').classList.add('hidden');
+        }
+
+        function toggleMobileLadder() {
+            document.getElementById('mobileLadderModal').classList.toggle('hidden');
+        }
+
+        // ==========================================
+        // PANTALLA FINAL Y RESUMEN
+        // ==========================================
+        function showEndScreen(wonMillion) {
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('endScreen').classList.remove('hidden');
+            document.getElementById('certPlayerName').textContent = playerName;
+
+            if (wonMillion) {
+                playSoundEffect('victory');
+                startConfetti();
+                document.getElementById('endTitle').textContent = "¡GRAN MILLONARIO DE LA CALIDAD 360°!";
+                document.getElementById('endSubtitle').textContent = "¡Felicitaciones! Respondiste correctamente las 7 preguntas de la Semana de la Calidad MAZ 2026.";
+                document.getElementById('certPrizeWon').textContent = "1.000.000 Pts";
+                document.getElementById('certCorrectCount').textContent = "7 / 7";
+                document.getElementById('certRankTitle').textContent = "Gran Millonario 360°";
+            } else {
+                const answeredCount = currentQuestionIndex;
+                let safePrize = "0 Pts";
+                let safeRank = "Participante 360°";
+
+                if (answeredCount >= 5) {
+                    safePrize = QUESTIONS_BANK[4].prize;
+                    safeRank = QUESTIONS_BANK[4].titleRank;
+                } else if (answeredCount >= 2) {
+                    safePrize = QUESTIONS_BANK[1].prize;
+                    safeRank = QUESTIONS_BANK[1].titleRank;
+                } else if (answeredCount >= 1) {
+                    safePrize = QUESTIONS_BANK[0].prize;
+                    safeRank = QUESTIONS_BANK[0].titleRank;
+                }
+
+                document.getElementById('endTitle').textContent = "¡BUEN COMPROMISO 360°, EQUIPO MAZ!";
+                document.getElementById('endSubtitle').textContent = "Cada gota cuenta para asegurar la excelencia de nuestra cerveza. ¡Repasa las respuestas e inténtalo de nuevo!";
+                document.getElementById('certPrizeWon').textContent = safePrize;
+                document.getElementById('certCorrectCount').textContent = `${answeredCount} / 7`;
+                document.getElementById('certRankTitle').textContent = safeRank;
+            }
+        }
+
+        function resetAndPlayAgain() {
+            stopConfetti();
+            startGame();
+        }
+
+        function reviewQuestionsModal() {
+            const body = document.getElementById('reviewModalBody');
+            body.innerHTML = '';
+            const letters = ['A', 'B', 'C', 'D'];
+
+            QUESTIONS_BANK.forEach(item => {
+                const card = `
+                    <div class="review-item">
+                        <div style="font-size:0.75rem; font-weight:800; color:var(--maz-gold); margin-bottom:4px;">
+                            Nivel ${item.level} • ${item.prize}
+                        </div>
+                        <p style="font-weight:800; color:#FFFFFF; margin-bottom:6px;">${item.question}</p>
+                        <div style="font-size:0.86rem; color:var(--green-glow); font-weight:700;">
+                            ✓ Respuesta Correcta: ${letters[item.correctIndex]}. ${item.options[item.correctIndex]}
+                        </div>
+                    </div>
+                `;
+                body.insertAdjacentHTML('beforeend', card);
+            });
+
+            document.getElementById('reviewModal').classList.remove('hidden');
+        }
+
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.add('hidden');
+        }
+
+        // ==========================================
+        // CONFETI DE VICTORIA
+        // ==========================================
+        let confettiAnimationId = null;
+        let confettiParticles = [];
+
+        function startConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const colors = ['#FFB800', '#FFE066', '#00D2FF', '#001E3D', '#22C55E', '#FFFFFF'];
+            confettiParticles = [];
+
+            for (let i = 0; i < 110; i++) {
+                confettiParticles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    w: Math.random() * 10 + 5,
+                    h: Math.random() * 6 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedY: Math.random() * 3 + 2,
+                    speedX: Math.random() * 2 - 1,
+                    rotation: Math.random() * 360,
+                    rotSpeed: Math.random() * 6 - 3
+                });
+            }
+
+            function renderConfetti() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                confettiParticles.forEach(p => {
+                    p.y += p.speedY;
+                    p.x += p.speedX;
+                    p.rotation += p.rotSpeed;
+                    if (p.y > canvas.height) {
+                        p.y = -15;
+                        p.x = Math.random() * canvas.width;
+                    }
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate((p.rotation * Math.PI) / 180);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+                    ctx.restore();
+                });
+                confettiAnimationId = requestAnimationFrame(renderConfetti);
+            }
+            renderConfetti();
+        }
+
+        function stopConfetti() {
+            if (confettiAnimationId) {
+                cancelAnimationFrame(confettiAnimationId);
+                confettiAnimationId = null;
+            }
+            const canvas = document.getElementById('confettiCanvas');
+            const ctx = canvas.getContext('2d');
+            if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confettiCanvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+    </script>
+</body>
+</html>
